@@ -2,7 +2,10 @@ version: 2.1
 executors:
     node:
         docker:
-            - image: circleci/node:10.18.1-browsers
+            - image: 'mcr.microsoft.com/playwright:bionic'
+              environment:
+                  NODE_ENV: development
+                  YARN_VERSION: 1.17.3
         environment:
             NPM_CONFIG_PREFIX: ~/.npm-global
             CHROME_BIN: /usr/bin/google-chrome
@@ -11,6 +14,14 @@ commands:
     setup:
         steps:
             - checkout
+            - run:
+                  name: Prepare Yarn Path
+                  command: echo 'export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"' >> $BASH_ENV
+
+            - run:
+                  name: Install Yarn
+                  command: |
+                      curl --retry 10 --retry-max-time 30 -o- -L https://yarnpkg.com/install.sh | bash -s -- --version $YARN_VERSION
             - restore_cache:
                   keys:
                       - v1-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
