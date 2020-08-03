@@ -1,9 +1,10 @@
 const { playwrightLauncher } = require('@web/test-runner-playwright');
+// const { puppeteerLauncher } = require('@web/test-runner-puppeteer');
 
 module.exports = {
     files: ['packages/*/test/*.test.js'],
     nodeResolve: true,
-    concurrency: 1,
+    concurrency: 2,
     coverage: true,
     coverageConfig: {
         report: true,
@@ -35,8 +36,19 @@ module.exports = {
         </html>
     `,
     browsers: [
+        // puppeteerLauncher({
+        //     launchOptions: {
+        //         product: 'chrome',
+        //     },
+        // }),
+        // puppeteerLauncher({
+        //     launchOptions: {
+        //         product: 'firefox',
+        //         executablePath: 'node_modules/puppeteer/.local-firefox/mac-81',
+        //     },
+        // }),
         playwrightLauncher({ product: 'chromium' }),
-        playwrightLauncher({ product: 'webkit' }),
+        // playwrightLauncher({ product: 'webkit' }),
         playwrightLauncher({
             product: 'firefox',
             launchOptions: {
