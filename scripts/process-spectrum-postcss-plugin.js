@@ -402,40 +402,32 @@ class SpectrumProcessor {
         if (!skipAll) {
             for (let selector of rule.selectors) {
                 let shouldStartWithHost = true;
-                //[dir=ltr] .spectrum-Button .spectrum-Button-label+.spectrum-Icon
                 if (startsWithDir.test(selector)) {
-                    // If [dir] but no `${hostSelector}` prepend one to the `[dir]`
-                    if (!hasHost.test(selector)) {
-                        selector = `${this.component.hostSelector}${selector}`;
-                    } else {
-                        const mutateSelector = (dir) => {
-                            selector = selector.replace(`[dir=${dir}] `, '');
-                            if (
-                                this.component.hostShadowSelector !== ':host' &&
-                                hasHost.test
-                            ) {
+                    const mutateSelector = (dir) => {
+                        selector = selector.replace(`[dir=${dir}] `, '');
+                        if (this.component.hostShadowSelector !== ':host') {
+                            if (!hasHost.test(selector)) {
+                                selector = `:host([dir=${dir}]) ${selector}`;
+                            } else {
                                 selector = `:host([dir=${dir}]) ${selector}`;
                                 selector = selector.replace(
                                     hasHost,
                                     this.component.hostShadowSelector
                                 );
-                                shouldStartWithHost = false;
-                                // If the host selector is in the first selector, make sure it is moved to the front of it...
-                            } else if (hasHost.test(selector.split(' ')[0])) {
-                                selector = selector.replace(hasHost, '');
-                                selector = `${this.component.hostSelector}[dir=${dir}]${selector}`;
-                            } else {
-                                selector = selector.replace(
-                                    hasHost,
-                                    `${this.component.hostSelector}[dir=${dir}]`
-                                );
                             }
-                        };
-                        if (selector.search(/\[dir\=ltr\]/) > -1) {
-                            mutateSelector('ltr');
+                            shouldStartWithHost = false;
+                            // If the host selector is in the first selector, make sure it is moved to the front of it...
+                        } else if (hasHost.test(selector.split(' ')[0])) {
+                            selector = selector.replace(hasHost, '');
+                            selector = `${this.component.hostSelector}[dir=${dir}]${selector}`;
                         } else {
-                            mutateSelector('rtl');
+                            selector = `${this.component.hostSelector}[dir=${dir}] ${selector}`;
                         }
+                    };
+                    if (selector.search(/\[dir\=ltr\]/) > -1) {
+                        mutateSelector('ltr');
+                    } else {
+                        mutateSelector('rtl');
                     }
                 }
                 if (
