@@ -33,6 +33,7 @@
         { "path": "../menu" },
         { "path": "../popover" },
         { "path": "../overlay" },
+        { "path": "../quick-actions" },
         { "path": "../radio" },
         { "path": "../rule" },
         { "path": "../search" },
